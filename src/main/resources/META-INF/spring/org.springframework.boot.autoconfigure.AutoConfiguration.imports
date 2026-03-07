@@ -1,1 +1,1 @@
-org.mongodb.config.AggregationAutoConfig
+com.mzinx.mongodb.aggregation.config.AggregationAutoConfig

@@ -1,8 +1,9 @@
-package org.mongodb.dao;
+package com.mzinx.mongodb.aggregation.dao;
 
-import org.mongodb.model.PipelineTemplate;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
+
+import com.mzinx.mongodb.aggregation.model.PipelineTemplate;
 
 
 

@@ -1,9 +1,10 @@
-package org.mongodb.service;
+package com.mzinx.mongodb.aggregation.service;
 
 import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Facet;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Variable;
+import com.mzinx.mongodb.aggregation.model.Aggregation;
 
 import org.bson.BsonDocument;
 import org.bson.BsonValue;
@@ -11,7 +12,6 @@ import org.bson.Document;
 import org.bson.codecs.DecoderContext;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.types.ObjectId;
-import org.mongodb.model.Aggregation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

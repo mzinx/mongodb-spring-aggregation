@@ -1,4 +1,4 @@
-package org.mongodb.model;
+package com.mzinx.mongodb.aggregation.model;
 
 import java.util.LinkedHashMap;
 import java.util.List;

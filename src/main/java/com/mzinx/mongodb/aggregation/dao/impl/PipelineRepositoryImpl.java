@@ -1,13 +1,13 @@
-package org.mongodb.dao.impl;
+package com.mzinx.mongodb.aggregation.dao.impl;
 
-import org.mongodb.dao.CustomPipelineRepository;
-import org.mongodb.model.PipelineTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import com.mongodb.client.model.Filters;
+import com.mzinx.mongodb.aggregation.dao.CustomPipelineRepository;
+import com.mzinx.mongodb.aggregation.model.PipelineTemplate;
 
 public class PipelineRepositoryImpl implements CustomPipelineRepository {
     private final Logger logger = LoggerFactory.getLogger(getClass());
