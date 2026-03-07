@@ -11,7 +11,7 @@
 	
 	<groupId>com.mzinx</groupId>
 	<artifactId>mongodb-spring-aggregation</artifactId>
-	<version>0.0.2</version>
+	<version>0.0.3</version>
     <packaging>jar</packaging>
 	
 	<name>mongodb-spring-aggregation</name>
