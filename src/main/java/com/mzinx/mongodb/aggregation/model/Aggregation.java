@@ -22,7 +22,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class Aggregation<T> {
-    private static String PLACEHOLDER_KEY = "_ph";
+    public static String PLACEHOLDER_KEY = "_ph";
     private String collectionName;
     private List<? extends Bson> pipelineTemplate;
     private Class<T> documentClass;

@@ -1,7 +1,7 @@
 package com.mzinx.mongodb.aggregation.model;
 
-import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.bson.BsonDocument;
 import org.bson.codecs.pojo.annotations.BsonId;
@@ -29,7 +29,7 @@ public class PipelineTemplate {
 
     @Field("v")
     @BsonIgnore
-    private List<LinkedHashMap<String, Object>> aggs;
+    private List<Map<String, Object>> aggs;
     
     @BsonProperty("v")
     @Transient
