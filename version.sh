@@ -15,3 +15,4 @@ mvn versions:commit
 VERSION=$(mvn -Dexec.executable='echo' -Dexec.args='${project.version}' --non-recursive exec:exec -q)
 git commit -am "$VERSION"
 git tag -a "v$VERSION" -m "$VERSION"
+git push origin --tags
