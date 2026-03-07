@@ -16,9 +16,9 @@ jobs:
       - name: Set up Java for publishing to Maven Central Repository
         uses: actions/setup-java@v4
         with:
-          java-version: '11'
+          java-version: '25'
           distribution: 'temurin'
-          server-id: ossrh
+          server-id: central
           server-username: MAVEN_CENTRAL_USERNAME
           server-password: MAVEN_CENTRAL_PASSWORD
       - name: Publish to the Maven Central Repository
