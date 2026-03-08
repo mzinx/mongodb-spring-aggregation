@@ -14,7 +14,7 @@
 	<version>0.0.3</version>
     <packaging>jar</packaging>
 	
-	<name>mongodb-spring-aggregation</name>
+	<name>MongoDB Spring Aggregation</name>
 	<description>MongoDB Aggregation Spring extension</description>
 	<url>https://github.com/mzinx/mongodb-spring-aggregation</url>
 	
