@@ -11,4 +11,5 @@ import lombok.Data;
 public class AggregationProperties {
     private boolean enabled = true;
     private String pipelineCollection = "_pipelines";
+    private String permissionCollection = "_permissions";
 }

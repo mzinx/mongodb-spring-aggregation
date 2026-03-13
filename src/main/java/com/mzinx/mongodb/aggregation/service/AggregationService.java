@@ -4,6 +4,7 @@ import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Facet;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Variable;
+import com.mzinx.mongodb.aggregation.config.AggregationProperties;
 import com.mzinx.mongodb.aggregation.model.Aggregation;
 
 import org.bson.BsonDocument;
@@ -36,6 +37,9 @@ public class AggregationService {
 
         @Autowired
         private CodecRegistry pojoCodecRegistry;
+
+        @Autowired
+        private AggregationProperties aggregationProperties;
 
         public <T> List<T> execute(Aggregation<T> agg) {
                 return execute(agg, (Map<String, Object>) null);
@@ -85,7 +89,7 @@ public class AggregationService {
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
                 ObjectId userId = new ObjectId(authentication.getName());
                 pipeline.add(Aggregates.lookup(
-                                "permission", List.of(new Variable<String>("id", "$_id")), List.of(Aggregates.match(
+                                aggregationProperties.getPermissionCollection(), List.of(new Variable<String>("id", "$_id")), List.of(Aggregates.match(
                                                 Filters.and(
                                                                 Filters.eq("eId", "$$id"),
                                                                 Filters.eq("uId", userId)))),
