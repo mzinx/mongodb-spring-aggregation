@@ -3,7 +3,7 @@ on:
   pull_request:
     branches: [dev, main]
   push:
-    branches: [dev, main]
+    branches: [dev]   # main is verified by the release gate; avoids concurrent functional test runs
 jobs:
   ci:
     uses: mzinx/workflows/.github/workflows/maven-ci.yml@v1
