@@ -9,6 +9,8 @@ on:
         default: patch
 jobs:
   release:
+    permissions:
+      contents: write
     uses: mzinx/workflows/.github/workflows/maven-release.yml@v1
     with:
       bump: ${{ inputs.bump }}
