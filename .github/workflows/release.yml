@@ -1,0 +1,15 @@
+name: Release
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: Version bump level
+        type: choice
+        options: [patch, minor, major]
+        default: patch
+jobs:
+  release:
+    uses: mzinx/workflows/.github/workflows/maven-release.yml@v1
+    with:
+      bump: ${{ inputs.bump }}
+    secrets: inherit
