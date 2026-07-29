@@ -27,12 +27,14 @@ public class PipelineTemplate {
     @BsonId
     private String name;
 
+    /** Pipeline stages as plain maps (Spring Data mapping of the {@code v} field). */
     @Field("v")
     @BsonIgnore
-    private List<Map<String, Object>> aggs;
-    
+    private List<Map<String, Object>> stages;
+
+    /** Pipeline stages as BSON documents (driver codec mapping of the {@code v} field). */
     @BsonProperty("v")
     @Transient
-    private List<BsonDocument> content;
+    private List<BsonDocument> bsonStages;
 
 }

@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.AutoConfigurationPackages;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.type.AnnotationMetadata;
 
-public class ScanRegistrar implements ImportBeanDefinitionRegistrar {
+public class AutoConfigurationPackageRegistrar implements ImportBeanDefinitionRegistrar {
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
         AutoConfigurationPackages.register(registry, "com.mzinx.mongodb.aggregation");

@@ -19,7 +19,7 @@ Add the following dependency to your `pom.xml`:
 <dependency>
     <groupId>com.mzinx</groupId>
     <artifactId>mongodb-spring-aggregation</artifactId>
-    <version>0.0.3</version>
+    <version>1.0.0</version>
 </dependency>
 ```
 
@@ -44,10 +44,10 @@ aggregation.pipelineCollection=_pipelines
 private AggregationService aggregationService;
 
 // Create a simple aggregation
-Aggregation<Document> agg = Aggregation.of("yourCollection", pipeline);
+AggregationSpec<Document> spec = AggregationSpec.of("yourCollection", pipeline);
 
 // Execute the aggregation
-List<Document> results = aggregationService.execute(agg);
+List<Document> results = aggregationService.execute(spec);
 ```
 
 ### Aggregation with Variables
@@ -59,28 +59,28 @@ List<Bson> pipeline = List.of(
 );
 
 // Create aggregation
-Aggregation<Document> agg = Aggregation.of("yourCollection", pipeline);
+AggregationSpec<Document> spec = AggregationSpec.of("yourCollection", pipeline);
 
 // Execute with variables
 Map<String, Object> variables = Map.of("statusVar", "active");
-List<Document> results = aggregationService.execute(agg, variables);
+List<Document> results = aggregationService.execute(spec, variables);
 ```
 
 ### Aggregation with Pagination
 
 ```java
 Pageable pageable = PageRequest.of(0, 10);
-Page<Document> page = aggregationService.execute(agg, pageable, variables);
+Page<Document> page = aggregationService.execute(spec, pageable, variables);
 ```
 
 ### Aggregation with Permission Checks
 
 ```java
 // Add permission check (requires Spring Security)
-Aggregation<Document> agg = Aggregation.of("yourCollection", pipeline)
+AggregationSpec<Document> spec = AggregationSpec.of("yourCollection", pipeline)
     .withPermissionCheck(1L); // permission bit mask
 
-List<Document> results = aggregationService.execute(agg);
+List<Document> results = aggregationService.execute(spec);
 ```
 
 ### Working with Pipeline Templates
@@ -92,7 +92,7 @@ private PipelineRepository pipelineRepository;
 // Save a pipeline template
 PipelineTemplate template = PipelineTemplate.builder()
     .name("userSummary")
-    .aggs(List.of(
+    .stages(List.of(
         Map.of("$match", Map.of("active", true)),
         Map.of("$group", Map.of("_id", "$department", "count", Map.of("$sum", 1)))
     ))
@@ -102,17 +102,17 @@ pipelineRepository.save(template);
 
 // Retrieve and use template
 PipelineTemplate saved = pipelineRepository.findByName("userSummary");
-// Convert to Aggregation and execute
+// Convert to AggregationSpec and execute
 ```
 
 ### Custom Document Types
 
 ```java
 // Use with custom POJO
-Aggregation<UserSummary> agg = Aggregation.of("users", pipeline)
+AggregationSpec<UserSummary> spec = AggregationSpec.of("users", pipeline)
     .withClass(UserSummary.class);
 
-List<UserSummary> results = aggregationService.execute(agg);
+List<UserSummary> results = aggregationService.execute(spec);
 ```
 
 ## Permission System

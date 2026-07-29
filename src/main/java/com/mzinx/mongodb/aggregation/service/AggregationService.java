@@ -5,7 +5,7 @@ import com.mongodb.client.model.Facet;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Variable;
 import com.mzinx.mongodb.aggregation.config.AggregationProperties;
-import com.mzinx.mongodb.aggregation.model.Aggregation;
+import com.mzinx.mongodb.aggregation.model.AggregationSpec;
 
 import org.bson.BsonDocument;
 import org.bson.BsonValue;
@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 @Service
 public class AggregationService {
 
-        private Logger logger = LoggerFactory.getLogger(getClass());
+        private final Logger logger = LoggerFactory.getLogger(getClass());
 
         @Autowired
         private MongoTemplate mongoTemplate;
@@ -41,29 +41,29 @@ public class AggregationService {
         @Autowired
         private AggregationProperties aggregationProperties;
 
-        public <T> List<T> execute(Aggregation<T> agg) {
-                return execute(agg, (Map<String, Object>) null);
+        public <T> List<T> execute(AggregationSpec<T> spec) {
+                return execute(spec, (Map<String, Object>) null);
         }
 
-        public <T> List<T> execute(Aggregation<T> agg,
+        public <T> List<T> execute(AggregationSpec<T> spec,
                         Map<String, Object> variables) {
-                return mongoTemplate.getCollection(agg.getCollectionName()).withDocumentClass(agg.getDocumentClass())
-                                .aggregate(loadPipeline(agg, Optional.ofNullable(variables), null))
+                return mongoTemplate.getCollection(spec.getCollectionName()).withDocumentClass(spec.getDocumentClass())
+                                .aggregate(loadPipeline(spec, Optional.ofNullable(variables), null))
                                 .into(new ArrayList<>());
         }
 
-        public <T> Page<T> execute(Aggregation<T> agg, Pageable pageable) {
-                return execute(agg, pageable, null);
+        public <T> Page<T> execute(AggregationSpec<T> spec, Pageable pageable) {
+                return execute(spec, pageable, null);
         }
 
-        public <T> Page<T> execute(Aggregation<T> agg, Pageable pageable,
+        public <T> Page<T> execute(AggregationSpec<T> spec, Pageable pageable,
                         Map<String, Object> variables) {
-                List<BsonDocument> pipeline = loadPipeline(agg, Optional.ofNullable(variables),
+                List<BsonDocument> pipeline = loadPipeline(spec, Optional.ofNullable(variables),
                                 pageable == null ? Pageable.unpaged() : pageable);
-                Document result = mongoTemplate.getCollection(agg.getCollectionName()).aggregate(pipeline).first();
+                Document result = mongoTemplate.getCollection(spec.getCollectionName()).aggregate(pipeline).first();
                 return PageableExecutionUtils.getPage(
                                 result.getList("results", Document.class).stream()
-                                                .map(d -> pojoCodecRegistry.get(agg.getDocumentClass()).decode(
+                                                .map(d -> pojoCodecRegistry.get(spec.getDocumentClass()).decode(
                                                                 d.toBsonDocument().asBsonReader(),
                                                                 DecoderContext.builder().build()))
                                                 .collect(Collectors.toList()),
@@ -71,14 +71,14 @@ public class AggregationService {
                                 () -> result.getList("total", Document.class).get(0).getInteger("v"));
         }
 
-        private List<BsonDocument> loadPipeline(Aggregation<?> agg, Optional<Map<String, Object>> variables,
+        private List<BsonDocument> loadPipeline(AggregationSpec<?> spec, Optional<Map<String, Object>> variables,
                         Pageable pageable) {
 
-                List<BsonDocument> pipeline = agg.merge(variables).asArray()
+                List<BsonDocument> pipeline = spec.bindVariables(variables).asArray()
                                 .stream().map(BsonValue::asDocument).collect(Collectors.toList());
 
-                if (agg.getPermission() != null)
-                        permissionCheck(pipeline, agg.getPermission());
+                if (spec.getPermission() != null)
+                        permissionCheck(pipeline, spec.getPermission());
                 if (pageable != null)
                         paginate(pipeline, pageable);
                 return pipeline;

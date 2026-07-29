@@ -16,7 +16,7 @@ import com.mongodb.MongoClientSettings;
 @EnableConfigurationProperties(AggregationProperties.class)
 @ConditionalOnProperty(prefix = "aggregation", name = "enabled", havingValue = "true", matchIfMissing = true)
 @ComponentScan("com.mzinx.mongodb.aggregation")
-@Import(ScanRegistrar.class)
+@Import(AutoConfigurationPackageRegistrar.class)
 public class AggregationAutoConfig {
 
     @Bean

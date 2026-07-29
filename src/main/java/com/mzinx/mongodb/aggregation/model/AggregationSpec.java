@@ -21,34 +21,34 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class Aggregation<T> {
-    public static String PLACEHOLDER_KEY = "_ph";
+public class AggregationSpec<T> {
+    public static final String PLACEHOLDER_KEY = "_ph";
     private String collectionName;
     private List<? extends Bson> pipelineTemplate;
     private Class<T> documentClass;
     private Long permission;
 
-    public static Aggregation<Document> of(String collectionName) {
+    public static AggregationSpec<Document> of(String collectionName) {
         return of(collectionName, List.of());
     }
 
-    public static Aggregation<Document> of(String collectionName, List<? extends Bson> pipelineTemplate) {
-        return new Aggregation<Document>(collectionName, pipelineTemplate, Document.class, null);
+    public static AggregationSpec<Document> of(String collectionName, List<? extends Bson> pipelineTemplate) {
+        return new AggregationSpec<Document>(collectionName, pipelineTemplate, Document.class, null);
     }
 
-    public <NewT> Aggregation<NewT> withClass(Class<NewT> clazz) {
-        return new Aggregation<NewT>(this.collectionName, this.pipelineTemplate, clazz, this.permission);
+    public <NewT> AggregationSpec<NewT> withClass(Class<NewT> clazz) {
+        return new AggregationSpec<NewT>(this.collectionName, this.pipelineTemplate, clazz, this.permission);
     }
 
-    public Aggregation<T> withPermissionCheck(Long permission) {
-        return new Aggregation<T>(this.collectionName, this.pipelineTemplate, this.documentClass, permission);
+    public AggregationSpec<T> withPermissionCheck(Long permission) {
+        return new AggregationSpec<T>(this.collectionName, this.pipelineTemplate, this.documentClass, permission);
     }
 
-    public BsonValue merge() {
-        return this.merge(Optional.empty());
+    public BsonValue bindVariables() {
+        return this.bindVariables(Optional.empty());
     }
 
-    public BsonValue merge(Optional<Map<String, Object>> variables) {
+    public BsonValue bindVariables(Optional<Map<String, Object>> variables) {
         if (this.pipelineTemplate == null)
             throw new RuntimeException("Empty pipeline template");
         return this.traverse(new BsonArray(this.pipelineTemplate.stream()
