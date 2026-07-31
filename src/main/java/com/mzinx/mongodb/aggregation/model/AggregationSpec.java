@@ -71,14 +71,14 @@ public class AggregationSpec<T> {
             if (value.isDocument()) {
                 BsonDocument d = value.asDocument();
                 if (d.containsKey(PLACEHOLDER_KEY)) {
-                    return map.get(d.getString(PLACEHOLDER_KEY).getValue());
+                    return map.containsKey(d.getString(PLACEHOLDER_KEY).getValue())?map.get(d.getString(PLACEHOLDER_KEY).getValue()):new BsonNull();
                 } else {
                     return traverse(value, map);
                 }
             } else if (value.isArray()) {
                 return traverse(value, map);
             } else {
-                return value;
+                return value==null?new BsonNull():value;
             }
         };
         if (bson.isDocument()) {
