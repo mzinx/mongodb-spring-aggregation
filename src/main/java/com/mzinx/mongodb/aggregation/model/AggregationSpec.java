@@ -54,8 +54,13 @@ public class AggregationSpec<T> {
         return this.traverse(new BsonArray(this.pipelineTemplate.stream()
                 .map(s -> (BsonValue) ((Bson) s).toBsonDocument()).collect(Collectors.toList())), variables.map(vs -> {
                     return vs.entrySet().stream().map(entry -> {
-                        if (entry.getValue() instanceof Bson
-                                && !(entry.getValue() instanceof BsonValue)) {
+                        // Already-BSON values (e.g. a BsonDocument built from a
+                        // change event) pass through unchanged, preserving BSON
+                        // type fidelity for dotted-path placeholder resolution.
+                        if (entry.getValue() instanceof BsonValue bv) {
+                            return Map.entry(entry.getKey(), bv);
+                        }
+                        if (entry.getValue() instanceof Bson) {
                             return Map.entry(entry.getKey(),
                                     (BsonValue) ((Bson) entry.getValue())
                                             .toBsonDocument());
@@ -71,7 +76,7 @@ public class AggregationSpec<T> {
             if (value.isDocument()) {
                 BsonDocument d = value.asDocument();
                 if (d.containsKey(PLACEHOLDER_KEY)) {
-                    return map.containsKey(d.getString(PLACEHOLDER_KEY).getValue())?map.get(d.getString(PLACEHOLDER_KEY).getValue()):new BsonNull();
+                    return resolvePlaceholder(d.getString(PLACEHOLDER_KEY).getValue(), map);
                 } else {
                     return traverse(value, map);
                 }
@@ -90,5 +95,31 @@ public class AggregationSpec<T> {
         } else {
             return replaceValue.apply(bson);
         }
+    }
+
+    /**
+     * Resolves a placeholder key against the bound variables.
+     * <p>
+     * A key is first looked up verbatim so flat keys (including keys that happen
+     * to contain dots) keep working exactly as before. If there is no exact
+     * match, the key is treated as a dotted path and walked into nested
+     * documents — e.g. {@code fullDocument.customer.status} descends
+     * {@code fullDocument} -> {@code customer} -> {@code status}. Any missing
+     * segment yields {@link BsonNull}, so placeholders that don't resolve are
+     * simply substituted with null (mirroring the original behavior).
+     */
+    private static BsonValue resolvePlaceholder(String key, Map<String, BsonValue> map) {
+        if (map.containsKey(key))
+            return map.get(key);
+        if (key == null || key.indexOf('.') < 0)
+            return new BsonNull();
+        String[] path = key.split("\\.");
+        BsonValue current = map.get(path[0]);
+        for (int i = 1; i < path.length && current != null; i++) {
+            if (!current.isDocument())
+                return new BsonNull();
+            current = current.asDocument().get(path[i]);
+        }
+        return current == null ? new BsonNull() : current;
     }
 }
